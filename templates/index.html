@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+      body {
+        background: url('/static/L319325885_g.webp') no-repeat center center/cover;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="text-center">Fraud Detection</h2>
+        <form id="fraudForm" class="mt-4">
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+            </div>
+            <div class="mb-3">
+                <label for="oldbalanceOrg" class="form-label">Old balance</label>
+                <input type="number" step="0.01" class="form-control" id="oldbalanceOrg" name="oldbalanceOrg" required>
+            </div>
+            <div class="mb-3">
+                <label for="newbalanceOrig" class="form-label">New balance</label>
+                <input type="number" step="0.01" class="form-control" id="newbalanceOrig" name="newbalanceOrig" required>
+            </div>
+            <div class="mb-3">
+                <label for="type_transaction" class="form-label">Transaction type</label>
+                <select class="form-control" id="type_transaction" name="type_transaction" required>
+                    <option value="TRANSFER">Transfer</option>
+                    <option value="CASH_OUT">Cash out</option>
+                    <option value="DEBIT">Debit</option>
+                    <option value="CASH_IN">Cash in</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Predict</button>
+        </form>
+        <div class="mt-3" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("fraudForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let formData = new FormData(this);
+            
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `<div class="alert alert-info">${data.prediction}</div>`;
+            })
+            .catch(error => console.error("Erreur:", error));
+        });
+    </script>
+</body>
+</html>
